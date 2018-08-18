@@ -35,6 +35,10 @@ public class AccountService {
         sessionIdToProfile.put(sessionId, userProfile);
     }
 
+    public Map getLoginToProfile(){
+        return loginToProfile;
+    }
+
     public void deleteSession(String sessionId) {
         sessionIdToProfile.remove(sessionId);
     }
