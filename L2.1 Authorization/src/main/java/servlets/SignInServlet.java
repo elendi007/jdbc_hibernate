@@ -25,7 +25,7 @@ public class SignInServlet extends HttpServlet {
 
 
 
-        UserProfile profile = accountService.getUserByLogin(login);
+        UserProfile     profile = accountService.getUserByLogin(login);
         if (accountService.getLoginToProfile().containsKey(login)){
             resp.getWriter().println("Authorized: " +   login);
         }
