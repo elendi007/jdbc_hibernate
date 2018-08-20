@@ -1,9 +1,19 @@
 package main;
 
 
+import accounts.AccountService;
 import dbService.DBException;
 import dbService.DBService;
 import dbService.dataSets.UsersDataSet;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.h2.jdbcx.JdbcDataSource;
+import servlets.SignInServlet;
+import servlets.SignUpServlet;
 
 /**
  * @author v.chibrikov
@@ -13,19 +23,27 @@ import dbService.dataSets.UsersDataSet;
  *         Описание курса и лицензия: https://github.com/vitaly-chibrikov/stepic_java_webserver
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
+        //AccountService accountService = new AccountService(new DBService());
+
         DBService dbService = new DBService();
-        dbService.printConnectInfo();
+//        dbService.printConnectInfo();
 
-        try {
-            long userId = dbService.addUser("tully");
-            System.out.println("Added user id: " + userId);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.addServlet(new ServletHolder(new SignUpServlet(dbService)), "/signup");
+        context.addServlet(new ServletHolder(new SignInServlet(dbService)), "/signin");
 
-            UsersDataSet dataSet = dbService.getUser(userId);
-            System.out.println("User data set: " + dataSet);
+        ResourceHandler resource_handler = new ResourceHandler();
+        resource_handler.setResourceBase("public_html");
 
-        } catch (DBException e) {
-            e.printStackTrace();
-        }
+        HandlerList handlers = new HandlerList();
+        handlers.setHandlers(new Handler[]{resource_handler, context});
+
+        Server server = new Server(8080);
+        server.setHandler(handlers);
+
+        server.start();
+        System.out.println("Server started");
+        server.join();
     }
 }

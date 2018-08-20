@@ -1,4 +1,8 @@
-package account;
+package accounts;
+
+import dbService.DBException;
+import dbService.DBService;
+import org.h2.jdbcx.JdbcDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +18,31 @@ public class AccountService {
     private final Map<String, UserProfile> loginToProfile;
     private final Map<String, UserProfile> sessionIdToProfile;
 
-    public AccountService() {
+    private final DBService dbService;
+
+    String url = "jdbc:h2:./h2db";
+    String name = "test";
+    String pass = "test";
+
+    JdbcDataSource ds = new JdbcDataSource();
+
+    public AccountService(DBService dbService) {
         loginToProfile = new HashMap<>();
         sessionIdToProfile = new HashMap<>();
+
+        this.dbService = dbService;
+
+        ds.setURL(url);
+        ds.setUser(name);
+        ds.setPassword(pass);
     }
 
     public void addNewUser(UserProfile userProfile) {
-        loginToProfile.put(userProfile.getLogin(), userProfile);
+        try {
+            dbService.addUser(userProfile.getLogin());
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
     }
 
     public UserProfile getUserByLogin(String login) {

@@ -2,10 +2,7 @@ package dbService;
 
 import dbService.dao.UsersDAO;
 import dbService.dataSets.UsersDataSet;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.internal.SessionFactoryImpl;
@@ -13,6 +10,7 @@ import org.hibernate.service.ServiceRegistry;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @author v.chibrikov
@@ -23,7 +21,7 @@ import java.sql.SQLException;
  */
 public class DBService {
     private static final String hibernate_show_sql = "true";
-    private static final String hibernate_hbm2ddl_auto = "create";
+    private static final String hibernate_hbm2ddl_auto = "none";
 
     private final SessionFactory sessionFactory;
 
@@ -73,6 +71,24 @@ public class DBService {
             throw new DBException(e);
         }
     }
+
+    public Object getUser(String name) throws DBException {
+        try {
+            Session session = sessionFactory.openSession();
+            Query query = session.createQuery("FROM UsersDataSet where name = :paramName");
+            query.setParameter("paramName", name);
+            return query.uniqueResult();
+
+//            UsersDAO dao = new UsersDAO(session);
+//            long id = dao.getUserId(name);
+//            //UsersDataSet dataSet = dao.get(id);
+//            session.close();
+//            return id;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
 
     public long addUser(String name) throws DBException {
         try {

@@ -3,8 +3,10 @@ package servlets;
 import accounts.AccountService;
 import accounts.UserProfile;
 import com.google.gson.Gson;
+import dbService.DBException;
+import dbService.DBService;
+import sun.security.pkcs11.Secmod;
 
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,10 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SignUpServlet extends HttpServlet {
-    private final AccountService accountService;
-
-    public SignUpServlet(AccountService accountService) {
-        this.accountService = accountService;
+    //private final AccountService accountService;
+    private final DBService dbService;
+    public SignUpServlet(DBService dbService) {
+        this.dbService = dbService;
     }
 
     @Override
@@ -23,19 +25,12 @@ public class SignUpServlet extends HttpServlet {
         String login = req.getParameter("login");
         String pass = req.getParameter("password");
 
-
-        accountService.addNewUser(new UserProfile(login, pass));
-        UserProfile profile = accountService.getUserByLogin(login);
-
-
-        accountService.addSession(req.getSession().getId(), profile);
-
-        Gson gson = new Gson();
-
-        String json = gson.toJson(profile);
-
-        resp.setContentType("text/html;charset=utf-8");
-        resp.getWriter().println(json);
+        try {
+            dbService.addUser(login);
+            //resp.getWriter().println("Authorized: " + login);
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
 
         resp.setStatus(HttpServletResponse.SC_OK);
     }
