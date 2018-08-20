@@ -26,7 +26,7 @@ public class DBService {
     private final SessionFactory sessionFactory;
 
     public DBService() {
-        Configuration configuration = getH2Configuration();
+        Configuration configuration = getMySqlConfiguration();
         sessionFactory = createSessionFactory(configuration);
     }
 
@@ -37,9 +37,9 @@ public class DBService {
 
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_example");
-        configuration.setProperty("hibernate.connection.username", "tully");
-        configuration.setProperty("hibernate.connection.password", "tully");
+        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_example?serverTimezone=UTC");
+        configuration.setProperty("hibernate.connection.username", "root");
+        configuration.setProperty("hibernate.connection.password", "root");
         configuration.setProperty("hibernate.show_sql", hibernate_show_sql);
         configuration.setProperty("hibernate.hbm2ddl.auto", hibernate_hbm2ddl_auto);
         return configuration;
@@ -78,12 +78,6 @@ public class DBService {
             Query query = session.createQuery("FROM UsersDataSet where name = :paramName");
             query.setParameter("paramName", name);
             return query.uniqueResult();
-
-//            UsersDAO dao = new UsersDAO(session);
-//            long id = dao.getUserId(name);
-//            //UsersDataSet dataSet = dao.get(id);
-//            session.close();
-//            return id;
         } catch (HibernateException e) {
             throw new DBException(e);
         }

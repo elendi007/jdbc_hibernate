@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="jdbc:h2:./h2db" uuid="e5ea9a2c-101e-42c0-bd4b-2f4b3dea5a28">
-      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" family="HSQLDB" exact-version="0.0" />
+    <data-source name="h2db" uuid="229daf27-804e-4f1c-b3ff-f7e8f950e00f">
+      <database-info product="H2" version="1.4.196 (2017-06-10)" jdbc-version="4.0" driver-name="H2 JDBC Driver" driver-version="1.4.196 (2017-06-10)" family="H2" exact-version="1.4.196">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="upper" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
-      <first-sync>true</first-sync>
-      <user-name>tully</user-name>
+      <auth-required>false</auth-required>
+      <introspection-schemas>@:@|H2DB:PRIVET</introspection-schemas>
+    </data-source>
+    <data-source name="@localhost" uuid="89251b23-e2cd-4d40-b41b-2b51578b1c78">
+      <database-info product="MySQL" version="8.0.12" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.46 ( Revision: 9cc87a48e75c2d2e87c1a293b2862ce651cb256e )" family="MYSQL" exact-version="8.0.12">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <introspection-schemas>*:@</introspection-schemas>
     </data-source>
   </component>
 </project>
