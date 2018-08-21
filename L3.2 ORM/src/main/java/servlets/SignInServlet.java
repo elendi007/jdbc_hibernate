@@ -13,12 +13,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SignInServlet extends HttpServlet {
-    private final DBService dbService;
+    private Statement statement;
 
-    public SignInServlet(DBService dbService) {
-        this.dbService = dbService;
+    public SignInServlet(Statement statement) {
+        this.statement = statement;
     }
 
     @Override
@@ -27,15 +30,30 @@ public class SignInServlet extends HttpServlet {
         String pass = req.getParameter("password");
 
         try {
-            if(dbService.getUser(login)!= null){
-                resp.getWriter().println("Authorized: "+login);
-            }
-            else{
+            try {
+                statement.execute("use db_example");
+
+                ResultSet resultSet = statement.executeQuery("select * from db_example.users where name = '"+ login + "'");
+                resultSet.next();
+                String user = resultSet.getString("name");
+
+                if(user != null){
+                    resp.getWriter().println("Authorized: "+login);
+                }else {
+                    resp.getWriter().println("Unauthorized");
+                }
+                resultSet.close();
+            } catch (SQLException e) {
                 resp.getWriter().println("Unauthorized");
+
+                //e.printStackTrace();
             }
-        } catch (DBException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            resp.getWriter().println("Unauthorized");
+            //e.printStackTrace();
         }
+
+
 
         resp.setContentType("text/html;charset=utf-8");
         resp.setStatus(HttpServletResponse.SC_OK);

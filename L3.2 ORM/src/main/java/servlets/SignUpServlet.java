@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SignUpServlet extends HttpServlet {
-    //private final AccountService accountService;
-    private final DBService dbService;
-    public SignUpServlet(DBService dbService) {
-        this.dbService = dbService;
+    private Statement statement;
+
+    public SignUpServlet(Statement statement) {
+        this.statement = statement;
     }
 
     @Override
@@ -26,12 +28,12 @@ public class SignUpServlet extends HttpServlet {
         String pass = req.getParameter("password");
 
         try {
-            dbService.addUser(login);
-            //resp.getWriter().println("Authorized: " + login);
-        } catch (DBException e) {
+            statement.execute("use db_example");
+            statement.execute("insert into  db_example.users(name) value ('"+ login + "')");
+            statement.close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

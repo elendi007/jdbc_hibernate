@@ -8,8 +8,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.ServiceRegistry;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -25,9 +24,24 @@ public class DBService {
 
     private final SessionFactory sessionFactory;
 
+
+    private String url = "jdbc:mysql://localhost:3306/db_example?serverTimezone=UTC";
+    private String username = "root";
+    private String password = "root";
+
+    private Statement statement;
+    private Connection connection;
+
     public DBService() {
         Configuration configuration = getMySqlConfiguration();
         sessionFactory = createSessionFactory(configuration);
+
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -83,6 +97,21 @@ public class DBService {
         }
     }
 
+    public long addUserJDBC(String name){
+        try {
+            //ResultSet resultSet = statement.executeQuery("insert into db_example.users(name) value ('"+ name +"')");
+            ResultSet resultSet = statement.executeQuery("create database flowers");
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return 1;
+    }
 
     public long addUser(String name) throws DBException {
         try {

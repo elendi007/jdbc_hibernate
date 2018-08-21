@@ -1,12 +1,13 @@
-dbService\DBException.class
 servlets\SignUpServlet.class
-dbService\executor\ResultHandler.class
 dbService\dao\UsersDAO.class
 dbService\executor\Executor.class
-servlets\UsersServlet.class
 dbService\DBService.class
+main\Main.class
+dbService\DBException.class
+dbService\executor\ResultHandler.class
+servlets\UsersServlet.class
+dbService\executor\JDBC.class
 servlets\SignInServlet.class
 accounts\AccountService.class
-main\Main.class
 accounts\UserProfile.class
 dbService\dataSets\UsersDataSet.class

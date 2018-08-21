@@ -1,19 +1,16 @@
 package main;
 
 
-import accounts.AccountService;
-import dbService.DBException;
-import dbService.DBService;
-import dbService.dataSets.UsersDataSet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.h2.jdbcx.JdbcDataSource;
 import servlets.SignInServlet;
 import servlets.SignUpServlet;
+
+import java.sql.*;
 
 /**
  * @author v.chibrikov
@@ -24,14 +21,16 @@ import servlets.SignUpServlet;
  */
 public class Main {
     public static void main(String[] args) throws Exception{
-        //AccountService accountService = new AccountService(new DBService());
 
-        DBService dbService = new DBService();
-//        dbService.printConnectInfo();
+        String url = "jdbc:mysql://localhost:3306/db_example?autoReconnect=true&useSSL=false&serverTimezone=UTC";
+        String username = "root";
+        String password = "root";
+
+        Connection connection = DriverManager.getConnection(url, username, password);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new SignUpServlet(dbService)), "/signup");
-        context.addServlet(new ServletHolder(new SignInServlet(dbService)), "/signin");
+        context.addServlet(new ServletHolder(new SignUpServlet(connection.createStatement())), "/signup");
+        context.addServlet(new ServletHolder(new SignInServlet(connection.createStatement())), "/signin");
 
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setResourceBase("public_html");
