@@ -33,33 +33,6 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws Exception{
 
-
-        //JDBC
-        String url = "jdbc:mysql://localhost:3306/db_example?autoReconnect=true&useSSL=false&serverTimezone=UTC";
-        String username = "root";
-        String password = "root";
-
-        Connection connection = DriverManager.getConnection(url, username, password);
-
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from db_example.users");
-
-        System.out.println("JDBC:");
-        while (resultSet.next()){
-            System.out.println("row: " + resultSet.getRow() + "\t\tid: "
-                    + resultSet.getInt("id")
-                    + "\t\t\tname: "
-                    + resultSet.getString("name"));
-        }
-
-        resultSet.close();
-        statement.close();
-        connection.close();
-
-
-
-
-        //Hibernate
         System.out.println("\nHibernate");
         Configuration configuration = new Configuration();
 
@@ -67,11 +40,11 @@ public class Main {
         //установка своейств для соединения с базой
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_example?serverTimezone=UTC");
+        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/service?serverTimezone=UTC");
         configuration.setProperty("hibernate.connection.username", "root");
         configuration.setProperty("hibernate.connection.password", "root");
-        configuration.setProperty("hibernate.show_sql", "false");
-        configuration.setProperty("hibernate.hbm2ddl.auto", "none");
+        configuration.setProperty("hibernate.show_sql","none");
+        configuration.setProperty("hibernate.hbm2ddl.auto", "create");
 
         //привязка класса с анотациями
         configuration.addAnnotatedClass(User.class);
@@ -88,14 +61,12 @@ public class Main {
         //инициализация объекта DAO(data access object) полученной сессией
         MyDAO myDAO = new MyDAO(session);
 
-        //получение всех юзеров
-        List<User> userList = myDAO.getAllUsers();
 
-        //перебор списка user
-        for (User user_iterator: userList) {
-
-            System.out.println("id: " + user_iterator.getId() + "\t\tname: \t" + user_iterator.getName());
+        for (int i = 0; i < 15; i++) {
+            myDAO.insertUser(new User("ignat" + i));
         }
+
         session.close();
+        sessionFactory.close();
     }
 }

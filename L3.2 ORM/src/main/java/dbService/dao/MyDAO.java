@@ -4,6 +4,7 @@ import dbService.dataSets.User;
 import org.eclipse.jetty.server.Authentication;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import javax.xml.crypto.Data;
 import java.io.Serializable;
@@ -18,6 +19,13 @@ public class MyDAO {
 
     public User getUser(long id){
         return (User) session.get(User.class, id);
+    }
+
+    public void insertUser(User user){
+        Transaction transaction = session.beginTransaction();
+        session.save(user);
+        transaction.commit();
+
     }
 
     public List<User> getAllUsers(){
